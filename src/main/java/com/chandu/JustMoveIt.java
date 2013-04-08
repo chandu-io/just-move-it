@@ -26,7 +26,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 /**
- * @version 0.0.1
+ * @version 0.0.2
  * @author Chandrasekhar Thotakura
  */
 public enum JustMoveIt {
@@ -268,7 +268,7 @@ enum ControlWindow implements ActionListener, ItemListener {
         public void run() {
             elapsedSeconds += 1;
             updateLabels();
-            if ((isFixedTime && elapsedSeconds == scheduledSeconds)
+            if ((isFixedTime && elapsedSeconds >= scheduledSeconds)
                     || elapsedSeconds == Integer.MAX_VALUE) {
                 task.cancel();
                 timer.cancel();

@@ -5,7 +5,7 @@
 
     <groupId>just-move-it</groupId>
     <artifactId>just-move-it</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.2</version>
     <packaging>jar</packaging>
 
     <name>just-move-it</name>
