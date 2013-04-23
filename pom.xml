@@ -3,13 +3,12 @@
     
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>just-move-it</groupId>
+    <groupId>com.chandu</groupId>
     <artifactId>just-move-it</artifactId>
     <version>0.0.2</version>
     <packaging>jar</packaging>
 
     <name>just-move-it</name>
-    <url>http://maven.apache.org</url>
     
     <build>
         <plugins>
