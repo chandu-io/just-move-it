@@ -33,15 +33,15 @@ import javax.swing.JPanel;
  */
 public enum JustMoveIt {
 
-    ONE;
+	ONE;
 
-    private void run() {
-        ControlWindow.ONE.open();
-    }
+	private void run() {
+		ControlWindow.ONE.open();
+	}
 
-    public static void main(final String[] tcs) {
-        JustMoveIt.ONE.run();
-    }
+	public static void main(final String[] tcs) {
+		JustMoveIt.ONE.run();
+	}
 
 	private enum MouseMover {
 
