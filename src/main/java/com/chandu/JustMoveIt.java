@@ -14,12 +14,15 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -28,18 +31,33 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 /**
- * @version 0.0.3
+ * @version 0.0.4
  * @author Chandrasekhar Thotakura
  */
 public enum JustMoveIt {
 
-	ONE;
+    ONE;
+
+	private static final Logger L;
+	
+	static {
+		L = Logger.getLogger(Strings.LOGGER_NAME);
+		L.setLevel(Level.ALL);
+		try {
+			FileHandler fileHandler = new FileHandler(Strings.LOG_FILE_NAME, true);
+			fileHandler.setFormatter(new SimpleFormatter());
+			L.addHandler(fileHandler);
+		} catch (IOException e) {
+			System.err.println(e);
+		}
+	}
 
 	private void run() {
 		ControlWindow.ONE.open();
 	}
 
 	public static void main(final String[] tcs) {
+		L.fine("App starting...");
 		JustMoveIt.ONE.run();
 	}
 
@@ -63,8 +81,9 @@ public enum JustMoveIt {
 			try {
 				robo = new Robot();
 			} catch (AWTException ex) {
-				Logger.getLogger(
-						MouseMover.class.getName()).log(Level.SEVERE, null, ex);
+				L.log(Level.SEVERE, "Could not initialize java.awt.Robot", ex);
+				L.fine("Exiting app...");
+				System.exit(1);
 			}
 		}
 
@@ -88,7 +107,6 @@ public enum JustMoveIt {
 	private enum ControlWindow implements ActionListener, ItemListener {
 
 		ONE;
-		private static final String EMPTY = "";
 		private static final int WINDOW_WIDTH = 300;
 		private static final int WINDOW_HEIGHT = 200;
 		private static final int MILLIS_PER_SECOND = 1000;
@@ -112,21 +130,20 @@ public enum JustMoveIt {
 
 			cardLayout = new CardLayout();
 			pane = new JPanel(cardLayout);
-			pane.add(inputPanel, "input");
-			pane.add(outputPanel, "output");
-			frame = new JFrame("JustMoveIt - Chandu");
+			pane.add(inputPanel);
+			pane.add(outputPanel);
+			frame = new JFrame(Strings.FRAME_TITLE);
 			frame.setContentPane(pane);
 			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			frame.setResizable(false);
 			frame.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
-			//frame.pack();
 			frame.setLocationRelativeTo(null);
 
 			timer = new Timer();
 		}
 
 		private void prepareInputPanel() {
-			fixedTimeCheckBox = new JCheckBox("Fixed Time?");
+			fixedTimeCheckBox = new JCheckBox(Strings.LABEL_FIXED_TIME);
 			fixedTimeCheckBox.setMnemonic(KeyEvent.VK_F);
 			fixedTimeCheckBox.setSelected(false);
 			fixedTimeCheckBox.addItemListener(this);
@@ -141,9 +158,9 @@ public enum JustMoveIt {
 			minutesComboBox.setEnabled(false);
 
 			final JPanel panel2 = new JPanel(new FlowLayout());
-			panel2.add(new JLabel("Hours:"));
+			panel2.add(new JLabel(Strings.LABEL_HOURS));
 			panel2.add(hoursComboBox);
-			panel2.add(new JLabel("Minutes:"));
+			panel2.add(new JLabel(Strings.LABEL_MINUTES));
 			panel2.add(minutesComboBox);
 
 			secondsComboBox = new JComboBox(
@@ -151,13 +168,13 @@ public enum JustMoveIt {
 			secondsComboBox.setSelectedIndex(5);
 
 			final JPanel panel3 = new JPanel(new FlowLayout());
-			panel3.add(new JLabel("Time interval (seconds):"));
+			panel3.add(new JLabel(Strings.LABEL_TIME_INTERVAL_SEC));
 			panel3.add(secondsComboBox);
 
-			startButton = new JButton("START");
+			startButton = new JButton(Strings.LABEL_START);
 			startButton.addActionListener(this);
 			startButton.setMnemonic(KeyEvent.VK_S);
-			iExitButton = new JButton("  EXIT  ");
+			iExitButton = new JButton(Strings.LABEL_EXIT_1);
 			iExitButton.addActionListener(this);
 			iExitButton.setMnemonic(KeyEvent.VK_X);
 
@@ -173,25 +190,25 @@ public enum JustMoveIt {
 		}
 
 		private void prepareOutputPanel() {
-			intervalLabel = new JLabel(EMPTY);
+			intervalLabel = new JLabel(Strings.EMPTY);
 			final JPanel panel1 = new JPanel(new FlowLayout());
-			panel1.add(new JLabel("Time interval:"));
+			panel1.add(new JLabel(Strings.LABEL_TIME_INTERVAL));
 			panel1.add(intervalLabel);
 
-			elapsedLabel = new JLabel(EMPTY);
+			elapsedLabel = new JLabel(Strings.EMPTY);
 			final JPanel panel2 = new JPanel(new FlowLayout());
-			panel2.add(new JLabel("Elapsed time:"));
+			panel2.add(new JLabel(Strings.LABEL_ELAPSED_TIME));
 			panel2.add(elapsedLabel);
 
-			remainingLabel = new JLabel(EMPTY);
+			remainingLabel = new JLabel(Strings.EMPTY);
 			final JPanel panel3 = new JPanel(new FlowLayout());
-			panel3.add(new JLabel("Remaining time:"));
+			panel3.add(new JLabel(Strings.LABEL_REMAINING_TIME));
 			panel3.add(remainingLabel);
 
-			stopButton = new JButton("STOP");
+			stopButton = new JButton(Strings.LABEL_STOP);
 			stopButton.addActionListener(this);
 			stopButton.setMnemonic(KeyEvent.VK_O);
-			oExitButton = new JButton(" EXIT ");
+			oExitButton = new JButton(Strings.LABEL_EXIT);
 			oExitButton.addActionListener(this);
 			oExitButton.setMnemonic(KeyEvent.VK_X);
 
@@ -209,7 +226,7 @@ public enum JustMoveIt {
 		private void updateLabels() {
 			final String remainingText = isFixedTime
 					? getFormattedTime(scheduledSeconds - elapsedSeconds)
-					: "UKNOWKN";
+					: Strings.LABEL_UNLIMITED;
 			remainingLabel.setText(remainingText);
 			elapsedLabel.setText(getFormattedTime(elapsedSeconds));
 		}
@@ -221,7 +238,7 @@ public enum JustMoveIt {
 		private String[] getNumbers(final int num) {
 			String[] returnArr = new String[num + 1];
 			for (int i = 0; i <= num; i += 1) {
-				returnArr[i] = EMPTY + i;
+				returnArr[i] = Strings.EMPTY + i;
 			}
 			return returnArr;
 		}
@@ -231,8 +248,7 @@ public enum JustMoveIt {
 		}
 
 		private String getFormattedTime(final int seconds) {
-			// String.format("%d:%02d:%02d", s/3600, (s%3600)/60, (s%60));
-			return String.format("   %02d : %02d : %02d",
+			return String.format(Strings.FMT_HH_MM_SS,
 					seconds / (MINS_PER_HOUR * SECS_PER_MINUTE),
 					(seconds % (MINS_PER_HOUR * SECS_PER_MINUTE)) / MINS_PER_HOUR,
 					seconds % SECS_PER_MINUTE);
@@ -247,7 +263,7 @@ public enum JustMoveIt {
 				final int minutes = getValueFromComboBox(minutesComboBox);
 				final int hours = getValueFromComboBox(hoursComboBox);
 				scheduledSeconds = (MINS_PER_HOUR * hours + minutes) * SECS_PER_MINUTE;
-				intervalLabel.setText(EMPTY + intervalSeconds);
+				intervalLabel.setText(Strings.EMPTY + intervalSeconds);
 				elapsedSeconds = 0;
 				updateLabels();
 				task = new DurationUpdater();
@@ -258,10 +274,12 @@ public enum JustMoveIt {
 				timer.purge();
 				cardLayout.first(pane);
 			} else if (source == iExitButton) {
+				L.fine("Exiting app...");
 				System.exit(0);
 			} else if (source == oExitButton) {
 				task.cancel();
 				timer.cancel();
+				L.fine("Exiting app...");
 				System.exit(0);
 			}
 		}
@@ -299,5 +317,30 @@ public enum JustMoveIt {
 				}
 			}
 		}
+	}
+	
+	private final class Strings {
+		private static final String APP_NAME = "JustMoveIt";
+		private static final String VERSION = "0.0.4";
+		
+		private static final String EMPTY = "";
+		private static final String LOGGER_NAME = APP_NAME;
+		private static final String LOG_FILE_NAME = APP_NAME + ".log";
+		private static final String FRAME_TITLE = APP_NAME + "-" + VERSION + " @ Chandu";
+		
+		private static final String LABEL_FIXED_TIME = "Fixed Time?";
+		private static final String LABEL_HOURS = "Hours:";
+		private static final String LABEL_MINUTES = "Minutes:";
+		private static final String LABEL_TIME_INTERVAL_SEC = "Time interval (seconds):";
+		private static final String LABEL_TIME_INTERVAL = "Time interval:";
+		private static final String LABEL_ELAPSED_TIME = "Elapsed time:";
+		private static final String LABEL_REMAINING_TIME = "Remaining time:";
+		private static final String LABEL_STOP = "STOP";
+		private static final String LABEL_EXIT = " EXIT ";
+		private static final String LABEL_START = "START";
+		private static final String LABEL_EXIT_1 = "  EXIT  ";
+		private static final String LABEL_UNLIMITED = "UNLIMITED";
+		
+		private static final String FMT_HH_MM_SS = "   %02d : %02d : %02d";
 	}
 }
