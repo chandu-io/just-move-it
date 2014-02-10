@@ -2,13 +2,9 @@ package com.chandu;
 
 import java.awt.AWTException;
 import java.awt.CardLayout;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
-import java.awt.MouseInfo;
-import java.awt.Point;
 import java.awt.Robot;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -16,7 +12,6 @@ import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.FileHandler;
@@ -31,14 +26,15 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 /**
- * @version 0.0.4
+ * @version 0.0.5
  * @author Chandrasekhar Thotakura
  */
 public enum JustMoveIt {
 
     ONE;
 
-	private static final Logger L;
+	private static Logger L;
+	private static Robot R;
 	
 	static {
 		L = Logger.getLogger(Strings.LOGGER_NAME);
@@ -50,6 +46,13 @@ public enum JustMoveIt {
 		} catch (IOException e) {
 			System.err.println(e);
 		}
+		try {
+			R = new Robot();
+		} catch (AWTException ex) {
+			L.log(Level.SEVERE, "Could not initialize java.awt.Robot", ex);
+			L.fine("Exiting app...");
+			System.exit(1);
+		}
 	}
 
 	private void run() {
@@ -59,49 +62,6 @@ public enum JustMoveIt {
 	public static void main(final String[] tcs) {
 		L.fine("App starting...");
 		JustMoveIt.ONE.run();
-	}
-
-	private enum MouseMover {
-
-		ONE;
-		private Random rnd;
-		private Robot robo;
-		private int width;
-		private int height;
-		private Point recentLocation;
-
-		private MouseMover() {
-			final Dimension screenSize =
-					Toolkit.getDefaultToolkit().getScreenSize();
-			width = (int) screenSize.getWidth();
-			height = (int) screenSize.getHeight();
-			recentLocation = new Point();
-			recentLocation.setLocation(MouseInfo.getPointerInfo().getLocation());
-			rnd = new Random();
-			try {
-				robo = new Robot();
-			} catch (AWTException ex) {
-				L.log(Level.SEVERE, "Could not initialize java.awt.Robot", ex);
-				L.fine("Exiting app...");
-				System.exit(1);
-			}
-		}
-
-		public void move() {
-			final int posX = rnd.nextInt(width);
-			final int posY = rnd.nextInt(height);
-			recentLocation.setLocation(posX, posY);
-			robo.mouseMove(posX, posY);
-		}
-		
-		public boolean hasMovedRecently() {
-			Point newLocation = MouseInfo.getPointerInfo().getLocation();
-			boolean hasMoved = !newLocation.equals(recentLocation);
-			if (hasMoved) {
-				recentLocation.setLocation(newLocation);
-			}
-			return hasMoved;
-		}
 	}
 
 	private enum ControlWindow implements ActionListener, ItemListener {
@@ -121,7 +81,7 @@ public enum JustMoveIt {
 		private CardLayout cardLayout;
 		private DurationUpdater task;
 		private Timer timer;
-		private int intervalSeconds, elapsedSeconds, scheduledSeconds, secondsToMove;
+		private int intervalSeconds, elapsedSeconds, scheduledSeconds;
 		private boolean isFixedTime;
 
 		private ControlWindow() {
@@ -259,7 +219,6 @@ public enum JustMoveIt {
 			final Object source = event.getSource();
 			if (source == startButton) {
 				intervalSeconds = getValueFromComboBox(secondsComboBox);
-				secondsToMove = intervalSeconds;
 				final int minutes = getValueFromComboBox(minutesComboBox);
 				final int hours = getValueFromComboBox(hoursComboBox);
 				scheduledSeconds = (MINS_PER_HOUR * hours + minutes) * SECS_PER_MINUTE;
@@ -300,20 +259,16 @@ public enum JustMoveIt {
 			@Override
 			public void run() {
 				elapsedSeconds += 1;
-				secondsToMove -= 1;
 				updateLabels();
 				if ((isFixedTime && elapsedSeconds >= scheduledSeconds)
 						|| elapsedSeconds == Integer.MAX_VALUE) {
 					task.cancel();
 					timer.cancel();
-					System.exit(0);
+					L.warning("Exiting app as elapsed time in seconds reached Integer.MAX_VALUE!");
+					System.exit(1);
 				}
-				if (MouseMover.ONE.hasMovedRecently()) {
-					secondsToMove = intervalSeconds;
-				}
-				if (secondsToMove == 0) {
-					secondsToMove = intervalSeconds;
-					MouseMover.ONE.move();
+				if (elapsedSeconds % intervalSeconds == 0) {
+					R.keyRelease(KeyEvent.VK_F23);
 				}
 			}
 		}
@@ -321,7 +276,7 @@ public enum JustMoveIt {
 	
 	private final class Strings {
 		private static final String APP_NAME = "JustMoveIt";
-		private static final String VERSION = "0.0.4";
+		private static final String VERSION = "0.0.5";
 		
 		private static final String EMPTY = "";
 		private static final String LOGGER_NAME = APP_NAME;
