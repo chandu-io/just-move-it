@@ -6,7 +6,7 @@
 
   <groupId>com.chandu</groupId>
   <artifactId>just-move-it</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
+  <version>1.0.0</version>
   <packaging>jar</packaging>
 
   <name>JustMoveIt</name>
@@ -63,7 +63,7 @@
         <configuration>
           <archive>
             <manifest>
-              <mainClass>io.c6.JustMoveIt</mainClass>
+              <mainClass>io.c6.justmoveit.Main</mainClass>
             </manifest>
           </archive>
         </configuration>

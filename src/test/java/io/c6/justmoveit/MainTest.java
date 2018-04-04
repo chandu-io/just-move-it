@@ -1,9 +1,9 @@
-package io.c6;
+package io.c6.justmoveit;
 
 
 import org.junit.jupiter.api.Test;
 
-class JustMoveItTest {
+class MainTest {
 
   @Test
   void test() {}
