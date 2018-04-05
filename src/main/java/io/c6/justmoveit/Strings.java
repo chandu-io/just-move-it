@@ -1,5 +1,8 @@
 package io.c6.justmoveit;
 
+/**
+ * @author Chandrasekhar Thotakura
+ */
 enum Strings {
 
   STRINGS;

@@ -23,7 +23,12 @@ import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 
 /**
+ *
+ * Main application window which contains the core logic
+ * of triggering key press using `java.awt.Robot`
+ *
  * @author Chandrasekhar Thotakura
+ *
  */
 final class MainView {
 

@@ -9,7 +9,12 @@ import java.time.Duration;
 import java.util.concurrent.ScheduledExecutorService;
 
 /**
+ *
+ * Implementation for `IntervalRunner`. An executor will run the `ForeverTask`
+ * given by the client for every second for the lifetime of the application.
+ *
  * @author Chandrasekhar Thotakura
+ *
  */
 final class ForeverRunner implements IntervalRunner {
 

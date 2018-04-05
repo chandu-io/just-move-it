@@ -19,7 +19,11 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 /**
+ *
+ * The `JPanel` with the options to select the duration and other control buttons
+ *
  * @author Chandrasekhar Thotakura
+ *
  */
 final class InputView {
 
