@@ -23,9 +23,9 @@ final class FixedDurationRunner implements IntervalRunner {
   FixedDurationRunner(final Duration executionDuration,
       final BiConsumer<Duration, Duration> block) {
     remainingDuration = executionDuration;
-    elapsedDuration = Duration.ZERO;
     this.block = block;
     executor.scheduleAtFixedRate(this::run, 0, ONE_SECOND.toMillis(), MILLISECONDS);
+    elapsedDuration = Duration.ZERO;
   }
 
   @Override

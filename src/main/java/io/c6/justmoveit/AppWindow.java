@@ -31,7 +31,7 @@ final class AppWindow {
     LOG = Logger.getLogger(Strings.LOGGER_NAME);
     LOG.setLevel(Level.ALL);
     try {
-      FileHandler fileHandler = new FileHandler(Strings.LOG_FILE_NAME, true);
+      final FileHandler fileHandler = new FileHandler(Strings.LOG_FILE_NAME, true);
       fileHandler.setFormatter(new SimpleFormatter());
       LOG.addHandler(fileHandler);
     } catch (final IOException e) {
@@ -127,9 +127,7 @@ final class AppWindow {
   void onExit(final ActionEvent event) {
     LOG.fine(Strings.LOG_MSG_EXITING_APP);
     cleanup();
-    invokeLater(() -> {
-      frame.dispose();
-    });
+    invokeLater(frame::dispose);
   }
 
   void foreverConsumer(final Duration elapsed) {
