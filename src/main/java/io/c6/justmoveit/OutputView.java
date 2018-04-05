@@ -12,8 +12,6 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import io.c6.justmoveit.Utils.Strings;
-
 /**
  * @author Chandrasekhar Thotakura
  */
@@ -63,9 +61,9 @@ final class OutputView {
   }
 
   private void addControlButtons() {
-    stopButton.addActionListener(mainWindow::onStopHandler);
+    stopButton.addActionListener(e -> mainWindow.onStopHandler());
     stopButton.setMnemonic(KeyEvent.VK_O);
-    exitButton.addActionListener(mainWindow::onExitHandler);
+    exitButton.addActionListener(e -> mainWindow.onExitHandler());
     exitButton.setMnemonic(KeyEvent.VK_X);
     final JPanel panel4 = new JPanel(new FlowLayout());
     panel4.add(stopButton);
@@ -74,9 +72,7 @@ final class OutputView {
   }
 
   void updateIntervalDuration(final Duration intervalDuration) {
-    invokeLater(() -> {
-      intervalLabel.setText(Strings.EMPTY + UTILS.toSeconds(intervalDuration));
-    });
+    invokeLater(() -> intervalLabel.setText(Strings.EMPTY + UTILS.toSeconds(intervalDuration)));
   }
 
   void updateLabels(final Duration elapsedDuration, final Duration remainingDuration) {

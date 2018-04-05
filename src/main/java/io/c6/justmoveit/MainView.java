@@ -1,11 +1,13 @@
 package io.c6.justmoveit;
 
+import static io.c6.justmoveit.Utils.UTILS;
+import static java.time.Duration.ZERO;
+import static java.util.logging.Level.SEVERE;
 import static javax.swing.SwingUtilities.invokeLater;
 
 import java.awt.AWTException;
 import java.awt.CardLayout;
 import java.awt.Robot;
-import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -19,8 +21,6 @@ import java.util.logging.SimpleFormatter;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
-
-import io.c6.justmoveit.Utils.Strings;
 
 /**
  * @author Chandrasekhar Thotakura
@@ -37,7 +37,7 @@ final class MainView {
       fileHandler.setFormatter(new SimpleFormatter());
       LOG.addHandler(fileHandler);
     } catch (final IOException e) {
-      System.err.println(e);
+      Logger.getGlobal().log(SEVERE, e.getMessage(), e);
     }
   }
 
@@ -89,16 +89,14 @@ final class MainView {
     try {
       robot = new Robot();
     } catch (final AWTException ex) {
-      LOG.log(Level.SEVERE, Strings.LOG_ERR_ROBOT_INIT_ERROR, ex);
+      LOG.log(SEVERE, Strings.LOG_ERR_ROBOT_INIT_ERROR, ex);
       LOG.fine(Strings.LOG_MSG_EXITING_APP);
       System.exit(1);
     }
   }
 
   private void tryPressingKey(final Duration elapsed) {
-    final long intervalMillis = inputPanel.getIntervalDuration().toMillis();
-    final long elapsedMillis = elapsed.toMillis();
-    if (elapsedMillis % intervalMillis == 0) {
+    if (UTILS.isDivisible(elapsed, inputPanel.getIntervalDuration())) {
       LOG.info(Strings.LOG_MSG_KEY_PRESSED);
       robot.keyRelease(KeyEvent.VK_F23);
     }
@@ -110,12 +108,12 @@ final class MainView {
   }
 
   private void fixedDurationConsumerTask(final Duration elapsed, final Duration remaining) {
-    if (Duration.ZERO.equals(remaining)) {
-      onExitHandler(null);
-      return;
+    if (ZERO.equals(remaining)) {
+      onExitHandler();
+    } else {
+      tryPressingKey(elapsed);
+      outputPanel.updateLabels(elapsed, remaining);
     }
-    tryPressingKey(elapsed);
-    outputPanel.updateLabels(elapsed, remaining);
   }
 
   private void cleanup() {
@@ -124,7 +122,7 @@ final class MainView {
     }
   }
 
-  void onStartHandler(final ActionEvent event) {
+  void onStartHandler() {
     cardLayout.last(pane);
     final boolean fixedTimeEnabled = inputPanel.isFixedTimeEnabled();
     final Duration executionDuration = inputPanel.getExecutionDuration();
@@ -135,12 +133,12 @@ final class MainView {
     outputPanel.updateIntervalDuration(intervalDuration);
   }
 
-  void onStopHandler(final ActionEvent event) {
+  void onStopHandler() {
     cardLayout.first(pane);
     cleanup();
   }
 
-  void onExitHandler(final ActionEvent event) {
+  void onExitHandler() {
     LOG.fine(Strings.LOG_MSG_EXITING_APP);
     cleanup();
     invokeLater(frame::dispose);

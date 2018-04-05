@@ -9,7 +9,6 @@ import static java.time.Duration.ofSeconds;
 
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
-import java.awt.event.ItemEvent;
 import java.awt.event.KeyEvent;
 import java.time.Duration;
 
@@ -18,8 +17,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-
-import io.c6.justmoveit.Utils.Strings;
 
 /**
  * @author Chandrasekhar Thotakura
@@ -55,7 +52,7 @@ final class InputView {
   private void addFixedTimeCheckBox() {
     fixedTimeCheckBox.setMnemonic(KeyEvent.VK_F);
     fixedTimeCheckBox.setSelected(false);
-    fixedTimeCheckBox.addItemListener(this::toggleCheckBox);
+    fixedTimeCheckBox.addItemListener(e -> toggleCheckBox());
     final JPanel panel1 = new JPanel(new FlowLayout());
     panel1.add(fixedTimeCheckBox);
     inputPanel.add(panel1);
@@ -82,9 +79,9 @@ final class InputView {
   }
 
   private void addControlButtons() {
-    startButton.addActionListener(mainWindow::onStartHandler);
+    startButton.addActionListener(e -> mainWindow.onStartHandler());
     startButton.setMnemonic(KeyEvent.VK_S);
-    exitButton.addActionListener(mainWindow::onExitHandler);
+    exitButton.addActionListener(e -> mainWindow.onExitHandler());
     exitButton.setMnemonic(KeyEvent.VK_X);
     final JPanel panel4 = new JPanel(new FlowLayout());
     panel4.add(startButton);
@@ -92,7 +89,7 @@ final class InputView {
     inputPanel.add(panel4);
   }
 
-  private void toggleCheckBox(final ItemEvent event) {
+  private void toggleCheckBox() {
     final boolean fixedTimeEnabled = isFixedTimeEnabled();
     hoursComboBox.setEnabled(fixedTimeEnabled);
     minutesComboBox.setEnabled(fixedTimeEnabled);
