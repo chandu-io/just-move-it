@@ -21,6 +21,7 @@
     <!-- maven-surefire-plugin.version 2.20.0 has some issues with JUnit 5 -->
     <maven-surefire-plugin.version>2.19.1</maven-surefire-plugin.version>
     <maven-jar-plugin.version>3.0.2</maven-jar-plugin.version>
+    <main.class>io.c6.justmoveit.Main</main.class>
   </properties>
 
   <dependencies>
@@ -63,7 +64,8 @@
         <configuration>
           <archive>
             <manifest>
-              <mainClass>io.c6.justmoveit.Main</mainClass>
+              <addClasspath>true</addClasspath>
+              <mainClass>${main.class}</mainClass>
             </manifest>
           </archive>
         </configuration>
