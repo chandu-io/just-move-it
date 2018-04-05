@@ -20,6 +20,7 @@ enum Strings {
   static final String LABEL_MINUTES = "Minutes:";
   static final String LABEL_TIME_INTERVAL_SEC = "Time interval (seconds):";
   static final String LABEL_TIME_INTERVAL = "Time interval:";
+  static final String LABEL_TIME_INTERVAL_SUFFIX = " second(s)";
   static final String LABEL_ELAPSED_TIME = "Elapsed time:";
   static final String LABEL_REMAINING_TIME = "Remaining time:";
   static final String LABEL_STOP = "STOP";

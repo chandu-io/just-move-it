@@ -75,16 +75,18 @@ final class OutputView {
   }
 
   void updateIntervalDuration(final Duration intervalDuration) {
-    invokeLater(() -> intervalLabel.setText(Strings.EMPTY + UTILS.toSeconds(intervalDuration)));
+    final String intervalText =
+        UTILS.toSeconds(intervalDuration) + Strings.LABEL_TIME_INTERVAL_SUFFIX;
+    invokeLater(() -> intervalLabel.setText(intervalText));
   }
 
   void updateLabels(final Duration elapsedDuration, final Duration remainingDuration) {
+    final String elapsedText = UTILS.getFormattedTime(elapsedDuration);
+    final String remainingText = Optional.ofNullable(remainingDuration)
+        .map(UTILS::getFormattedTime).orElse(Strings.LABEL_FOREVER);
     invokeLater(() -> {
-      elapsedLabel.setText(UTILS.getFormattedTime(elapsedDuration));
-      final String text = Optional.ofNullable(remainingDuration)
-          .map(UTILS::getFormattedTime)
-          .orElse(Strings.LABEL_FOREVER);
-      remainingLabel.setText(text);
+      elapsedLabel.setText(elapsedText);
+      remainingLabel.setText(remainingText);
     });
   }
 
