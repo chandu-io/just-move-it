@@ -9,17 +9,18 @@ import java.time.Duration;
 import java.util.concurrent.ScheduledExecutorService;
 
 /**
- *
  * Implementation for `IntervalRunner`. An executor will run the `FixedDurationTask`
  * given by the client for every second until the specified execution duration is completed.
  *
  * @author Chandrasekhar Thotakura
- *
  */
 final class FixedDurationRunner implements IntervalRunner {
 
+  private static final int EXECUTOR_POOL_SIZE = 1;
+  private static final int EXECUTOR_DELAY_MILLIS = 0;
+
   private final FixedDurationTask task;
-  private final ScheduledExecutorService executor = newScheduledThreadPool(1);
+  private final ScheduledExecutorService executor = newScheduledThreadPool(EXECUTOR_POOL_SIZE);
 
   private Duration remainingDuration;
   private Duration elapsedDuration;
@@ -27,7 +28,8 @@ final class FixedDurationRunner implements IntervalRunner {
   FixedDurationRunner(final Duration executionDuration, final FixedDurationTask task) {
     remainingDuration = executionDuration;
     this.task = task;
-    executor.scheduleAtFixedRate(this::run, 0, ONE_SECOND.toMillis(), MILLISECONDS);
+    executor.scheduleAtFixedRate(
+        this::run, EXECUTOR_DELAY_MILLIS, ONE_SECOND.toMillis(), MILLISECONDS);
     elapsedDuration = ZERO;
   }
 

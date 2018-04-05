@@ -13,11 +13,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 /**
- *
  * The `JPanel` with the information on current execution and other control buttons
  *
  * @author Chandrasekhar Thotakura
- *
  */
 final class OutputView {
 
