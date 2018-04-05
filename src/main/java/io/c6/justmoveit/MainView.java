@@ -13,6 +13,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.time.Duration;
+import java.util.Optional;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -120,9 +121,7 @@ final class MainView {
   }
 
   private void cleanup() {
-    if (runner != null) {
-      runner.stop();
-    }
+    Optional.ofNullable(runner).ifPresent(IntervalRunner::stop);
   }
 
   void onStartHandler() {

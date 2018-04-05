@@ -7,6 +7,7 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.KeyEvent;
 import java.time.Duration;
+import java.util.Optional;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -80,11 +81,10 @@ final class OutputView {
   void updateLabels(final Duration elapsedDuration, final Duration remainingDuration) {
     invokeLater(() -> {
       elapsedLabel.setText(UTILS.getFormattedTime(elapsedDuration));
-      if (remainingDuration != null) {
-        remainingLabel.setText(UTILS.getFormattedTime(remainingDuration));
-      } else {
-        remainingLabel.setText(Strings.LABEL_FOREVER);
-      }
+      final String text = Optional.ofNullable(remainingDuration)
+          .map(UTILS::getFormattedTime)
+          .orElse(Strings.LABEL_FOREVER);
+      remainingLabel.setText(text);
     });
   }
 

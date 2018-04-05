@@ -49,11 +49,11 @@ enum Utils {
     return largeMillis % smallMillis == 0;
   }
 
-  ComboBoxModel<Long> numberedComboBoxModel(long endExclusive) {
+  ComboBoxModel<Long> numberedComboBoxModel(final long endExclusive) {
     return numberedComboBoxModel(0, endExclusive);
   }
 
-  ComboBoxModel<Long> numberedComboBoxModel(long startInclusive, long endExclusive) {
+  ComboBoxModel<Long> numberedComboBoxModel(final long startInclusive, final long endExclusive) {
     return new DefaultComboBoxModel<>(
         LongStream.range(startInclusive, endExclusive).boxed()
         .collect(toCollection(Vector::new)));
