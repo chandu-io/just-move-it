@@ -3,6 +3,7 @@ package io.c6.justmoveit;
 import static java.time.Duration.ofHours;
 import static java.time.Duration.ofMinutes;
 import static java.time.Duration.ofSeconds;
+import static javax.swing.SwingUtilities.invokeLater;
 
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
@@ -67,7 +68,7 @@ final class OutputView {
   private void addControlButtons() {
     stopButton.addActionListener(mainWindow::onStop);
     stopButton.setMnemonic(KeyEvent.VK_O);
-    exitButton.addActionListener(mainWindow::onOutputExit);
+    exitButton.addActionListener(mainWindow::onExit);
     exitButton.setMnemonic(KeyEvent.VK_X);
     final JPanel panel4 = new JPanel(new FlowLayout());
     panel4.add(stopButton);
@@ -91,16 +92,20 @@ final class OutputView {
   }
 
   void updateIntervalDuration(final Duration intervalDuration) {
-    intervalLabel.setText(Strings.EMPTY + toSeconds(intervalDuration));
+    invokeLater(() -> {
+      intervalLabel.setText(Strings.EMPTY + toSeconds(intervalDuration));
+    });
   }
 
   void updateLabels(final Duration elapsedDuration, final Duration remainingDuration) {
-    elapsedLabel.setText(getFormattedTime(elapsedDuration));
-    if (remainingDuration != null) {
-      remainingLabel.setText(getFormattedTime(remainingDuration));
-    } else {
-      remainingLabel.setText(Strings.LABEL_FOREVER);
-    }
+    invokeLater(() -> {
+      elapsedLabel.setText(getFormattedTime(elapsedDuration));
+      if (remainingDuration != null) {
+        remainingLabel.setText(getFormattedTime(remainingDuration));
+      } else {
+        remainingLabel.setText(Strings.LABEL_FOREVER);
+      }
+    });
   }
 
   JPanel getContainer() {

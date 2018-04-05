@@ -28,6 +28,7 @@ interface Strings {
 
   String FMT_HH_MM_SS = "   %02d : %02d : %02d";
 
+  String LOG_MSG_KEY_PRESSED = "Key pressed...";
   String LOG_MSG_EXITING_APP = "Exiting app...";
   String LOG_ERR_ROBOT_INIT_ERROR = "Could not initialize java.awt.Robot";
 }

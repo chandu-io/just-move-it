@@ -1,9 +1,10 @@
 package io.c6.justmoveit;
 
+import static java.util.concurrent.Executors.newScheduledThreadPool;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+
 import java.time.Duration;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 /**
@@ -14,16 +15,14 @@ final class ForeverRunner implements IntervalRunner {
   private static final Duration ONE_SECOND = Duration.ofSeconds(1);
 
   private final Consumer<Duration> block;
-  private final ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+  private final ScheduledExecutorService executor = newScheduledThreadPool(1);
 
   private Duration elapsedDuration;
 
-  ForeverRunner(final Duration intervalDuration,
-      final Consumer<Duration> block) {
-    elapsedDuration = Duration.ZERO;
+  ForeverRunner(final Consumer<Duration> block) {
     this.block = block;
-    executor.scheduleAtFixedRate(this::run, 0,
-        intervalDuration.toMillis(), TimeUnit.MILLISECONDS);
+    executor.scheduleAtFixedRate(this::run, 0, ONE_SECOND.toMillis(), MILLISECONDS);
+    elapsedDuration = Duration.ZERO;
   }
 
   @Override
@@ -41,13 +40,5 @@ final class ForeverRunner implements IntervalRunner {
   private void run() {
     block.accept(elapsedDuration);
     elapsedDuration = elapsedDuration.plus(ONE_SECOND);
-  }
-
-  public static void main(String[] args) {
-    new ForeverRunner(ONE_SECOND, elapsed -> {
-      System.out.println(String.format("%s, %s",
-          elapsed.toString(),
-          Thread.currentThread().toString()));
-    });
   }
 }

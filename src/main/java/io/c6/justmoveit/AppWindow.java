@@ -1,10 +1,14 @@
 package io.c6.justmoveit;
 
+import static javax.swing.SwingUtilities.invokeLater;
+
 import java.awt.AWTException;
 import java.awt.CardLayout;
 import java.awt.Robot;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.logging.FileHandler;
@@ -60,11 +64,23 @@ final class AppWindow {
     pane.add(outputPanel.getContainer());
     frame.setContentPane(pane);
     frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+    frame.addWindowListener(onBeforeClosing());
     frame.setResizable(false);
     frame.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
     frame.setLocationRelativeTo(null);
     frame.setVisible(true);
     initRobot();
+  }
+
+  private WindowAdapter onBeforeClosing() {
+    return new WindowAdapter() {
+      @Override
+      public void windowClosing(final WindowEvent e) {
+        super.windowClosing(e);
+        LOG.fine(Strings.LOG_MSG_EXITING_APP);
+        cleanup();
+      }
+    };
   }
 
   private void initRobot() {
@@ -77,8 +93,19 @@ final class AppWindow {
     }
   }
 
-  private void pressKey() {
-    robot.keyRelease(KeyEvent.VK_F23);
+  private void tryPressingKey(final Duration elapsed) {
+    final long intervalMillis = inputPanel.getIntervalDuration().toMillis();
+    final long elapsedMillis = elapsed.toMillis();
+    if (elapsedMillis % intervalMillis == 0) {
+      LOG.info(Strings.LOG_MSG_KEY_PRESSED);
+      robot.keyRelease(KeyEvent.VK_F23);
+    }
+  }
+
+  private void cleanup() {
+    if (runner != null) {
+      runner.stop();
+    }
   }
 
   void onStart(final ActionEvent event) {
@@ -87,33 +114,35 @@ final class AppWindow {
     final Duration executionDuration = inputPanel.getExecutionDuration();
     final Duration intervalDuration = inputPanel.getIntervalDuration();
     runner = fixedTimeEnabled
-        ? new FixedDurationRunner(executionDuration, intervalDuration, this::fixedDurationConsumer)
-        : new ForeverRunner(intervalDuration, this::foreverConsumer);
+        ? new FixedDurationRunner(executionDuration, this::fixedDurationConsumer)
+        : new ForeverRunner(this::foreverConsumer);
     outputPanel.updateIntervalDuration(intervalDuration);
   }
 
   void onStop(final ActionEvent event) {
     cardLayout.first(pane);
-    runner.stop();
+    cleanup();
   }
 
-  void onInputExit(final ActionEvent event) {
+  void onExit(final ActionEvent event) {
     LOG.fine(Strings.LOG_MSG_EXITING_APP);
-    System.exit(0);
-  }
-
-  void onOutputExit(final ActionEvent event) {
-    runner.stop();
-    onInputExit(event);
+    cleanup();
+    invokeLater(() -> {
+      frame.dispose();
+    });
   }
 
   void foreverConsumer(final Duration elapsed) {
-    pressKey();
+    tryPressingKey(elapsed);
     outputPanel.updateLabels(elapsed, null);
   }
 
   void fixedDurationConsumer(final Duration elapsed, final Duration remaining) {
-    pressKey();
+    if (Duration.ZERO.equals(remaining)) {
+      onExit(null);
+      return;
+    }
+    tryPressingKey(elapsed);
     outputPanel.updateLabels(elapsed, remaining);
   }
 }

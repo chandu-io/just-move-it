@@ -85,7 +85,7 @@ final class InputView {
   private void addControlButtons() {
     startButton.addActionListener(mainWindow::onStart);
     startButton.setMnemonic(KeyEvent.VK_S);
-    exitButton.addActionListener(mainWindow::onInputExit);
+    exitButton.addActionListener(mainWindow::onExit);
     exitButton.setMnemonic(KeyEvent.VK_X);
     final JPanel panel4 = new JPanel(new FlowLayout());
     panel4.add(startButton);
