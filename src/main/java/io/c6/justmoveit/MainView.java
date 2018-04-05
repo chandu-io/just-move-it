@@ -20,10 +20,12 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 
+import io.c6.justmoveit.Utils.Strings;
+
 /**
  * @author Chandrasekhar Thotakura
  */
-final class AppWindow {
+final class MainView {
 
   private static final Logger LOG;
 
@@ -51,7 +53,7 @@ final class AppWindow {
   private IntervalRunner runner;
   private Robot robot;
 
-  AppWindow() {
+  MainView() {
     frame = new JFrame(Strings.FRAME_TITLE);
     cardLayout = new CardLayout();
     pane = new JPanel(cardLayout);
@@ -102,45 +104,45 @@ final class AppWindow {
     }
   }
 
+  private void foreverConsumerTask(final Duration elapsed) {
+    tryPressingKey(elapsed);
+    outputPanel.updateLabels(elapsed, null);
+  }
+
+  private void fixedDurationConsumerTask(final Duration elapsed, final Duration remaining) {
+    if (Duration.ZERO.equals(remaining)) {
+      onExitHandler(null);
+      return;
+    }
+    tryPressingKey(elapsed);
+    outputPanel.updateLabels(elapsed, remaining);
+  }
+
   private void cleanup() {
     if (runner != null) {
       runner.stop();
     }
   }
 
-  void onStart(final ActionEvent event) {
+  void onStartHandler(final ActionEvent event) {
     cardLayout.last(pane);
     final boolean fixedTimeEnabled = inputPanel.isFixedTimeEnabled();
     final Duration executionDuration = inputPanel.getExecutionDuration();
     final Duration intervalDuration = inputPanel.getIntervalDuration();
     runner = fixedTimeEnabled
-        ? new FixedDurationRunner(executionDuration, this::fixedDurationConsumer)
-        : new ForeverRunner(this::foreverConsumer);
+        ? new FixedDurationRunner(executionDuration, this::fixedDurationConsumerTask)
+        : new ForeverRunner(this::foreverConsumerTask);
     outputPanel.updateIntervalDuration(intervalDuration);
   }
 
-  void onStop(final ActionEvent event) {
+  void onStopHandler(final ActionEvent event) {
     cardLayout.first(pane);
     cleanup();
   }
 
-  void onExit(final ActionEvent event) {
+  void onExitHandler(final ActionEvent event) {
     LOG.fine(Strings.LOG_MSG_EXITING_APP);
     cleanup();
     invokeLater(frame::dispose);
-  }
-
-  void foreverConsumer(final Duration elapsed) {
-    tryPressingKey(elapsed);
-    outputPanel.updateLabels(elapsed, null);
-  }
-
-  void fixedDurationConsumer(final Duration elapsed, final Duration remaining) {
-    if (Duration.ZERO.equals(remaining)) {
-      onExit(null);
-      return;
-    }
-    tryPressingKey(elapsed);
-    outputPanel.updateLabels(elapsed, remaining);
   }
 }

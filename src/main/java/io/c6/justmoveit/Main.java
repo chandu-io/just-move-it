@@ -8,7 +8,7 @@ import static javax.swing.SwingUtilities.invokeLater;
 public final class Main {
 
   public static void main(final String[] tcs) {
-    final AppWindow app = new AppWindow();
+    final MainView app = new MainView();
     invokeLater(app::open);
   }
 }

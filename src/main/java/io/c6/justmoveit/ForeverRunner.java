@@ -1,5 +1,6 @@
 package io.c6.justmoveit;
 
+import static io.c6.justmoveit.Utils.ONE_SECOND;
 import static java.util.concurrent.Executors.newScheduledThreadPool;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
@@ -11,8 +12,6 @@ import java.util.function.Consumer;
  * @author Chandrasekhar Thotakura
  */
 final class ForeverRunner implements IntervalRunner {
-
-  private static final Duration ONE_SECOND = Duration.ofSeconds(1);
 
   private final Consumer<Duration> block;
   private final ScheduledExecutorService executor = newScheduledThreadPool(1);

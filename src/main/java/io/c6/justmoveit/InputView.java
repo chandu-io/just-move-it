@@ -1,6 +1,8 @@
 package io.c6.justmoveit;
 
-import static java.time.Duration.ofDays;
+import static io.c6.justmoveit.Utils.HOURS_PER_DAY;
+import static io.c6.justmoveit.Utils.MINS_PER_HOUR;
+import static io.c6.justmoveit.Utils.UTILS;
 import static java.time.Duration.ofHours;
 import static java.time.Duration.ofMinutes;
 import static java.time.Duration.ofSeconds;
@@ -10,26 +12,23 @@ import java.awt.GridLayout;
 import java.awt.event.ItemEvent;
 import java.awt.event.KeyEvent;
 import java.time.Duration;
-import java.util.stream.LongStream;
 
-import javax.swing.ComboBoxModel;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import io.c6.justmoveit.Utils.Strings;
+
 /**
  * @author Chandrasekhar Thotakura
  */
 final class InputView {
 
-  private static final long MINS_PER_HOUR = ofHours(1).toMinutes();
-  private static final long HOURS_PER_DAY = ofDays(1).toHours();
   private static final long MAX_INTERVAL_SECONDS = 120;
 
-  private final AppWindow mainWindow;
+  private final MainView mainWindow;
   private final JPanel inputPanel;
   private final JButton startButton;
   private final JButton exitButton;
@@ -38,15 +37,15 @@ final class InputView {
   private final JComboBox<Long> minutesComboBox;
   private final JComboBox<Long> secondsComboBox;
 
-  InputView(final AppWindow mainWindow) {
+  InputView(final MainView mainWindow) {
     this.mainWindow = mainWindow;
     inputPanel = new JPanel(new GridLayout(4, 1));
     startButton = new JButton(Strings.LABEL_START);
     exitButton = new JButton(Strings.LABEL_EXIT_1);
     fixedTimeCheckBox = new JCheckBox(Strings.LABEL_FIXED_TIME);
-    hoursComboBox = new JComboBox<>(numberedComboBoxModel(HOURS_PER_DAY));
-    minutesComboBox = new JComboBox<>(numberedComboBoxModel(MINS_PER_HOUR));
-    secondsComboBox = new JComboBox<>(numberedComboBoxModel(1, (MAX_INTERVAL_SECONDS + 1)));
+    hoursComboBox = new JComboBox<>(UTILS.numberedComboBoxModel(HOURS_PER_DAY));
+    minutesComboBox = new JComboBox<>(UTILS.numberedComboBoxModel(MINS_PER_HOUR));
+    secondsComboBox = new JComboBox<>(UTILS.numberedComboBoxModel(1, (MAX_INTERVAL_SECONDS + 1)));
     addFixedTimeCheckBox();
     addDurationComboBoxes();
     addIntervalComboBox();
@@ -83,24 +82,14 @@ final class InputView {
   }
 
   private void addControlButtons() {
-    startButton.addActionListener(mainWindow::onStart);
+    startButton.addActionListener(mainWindow::onStartHandler);
     startButton.setMnemonic(KeyEvent.VK_S);
-    exitButton.addActionListener(mainWindow::onExit);
+    exitButton.addActionListener(mainWindow::onExitHandler);
     exitButton.setMnemonic(KeyEvent.VK_X);
     final JPanel panel4 = new JPanel(new FlowLayout());
     panel4.add(startButton);
     panel4.add(exitButton);
     inputPanel.add(panel4);
-  }
-
-  private ComboBoxModel<Long> numberedComboBoxModel(long endExclusive) {
-    return numberedComboBoxModel(0, endExclusive);
-  }
-
-  private ComboBoxModel<Long> numberedComboBoxModel(long startInclusive, long endExclusive) {
-    final DefaultComboBoxModel<Long> model = new DefaultComboBoxModel<>();
-    LongStream.range(startInclusive, endExclusive).forEach(model::addElement);
-    return model;
   }
 
   private void toggleCheckBox(final ItemEvent event) {
