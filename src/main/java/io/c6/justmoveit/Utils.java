@@ -22,35 +22,27 @@ enum Utils {
   UTILS;
 
   static final Duration ONE_SECOND = ofSeconds(1);
-  static final Duration ONE_MINUTE = ofMinutes(1);
-  static final Duration ONE_HOUR = ofHours(1);
-  static final Duration ONE_DAY = ofDays(1);
-  static final long SECS_PER_MINUTE = UTILS.toSeconds(ONE_MINUTE);
-  static final long MINS_PER_HOUR = ONE_HOUR.toMinutes();
-  static final long HOURS_PER_DAY = ONE_DAY.toHours();
+  static final long MILLIS_PER_SECOND = ONE_SECOND.toMillis();
+  static final long SECONDS_PER_MINUTE = ofMinutes(1).getSeconds();
+  static final long MINUTES_PER_HOUR = ofHours(1).toMinutes();
+  static final long HOURS_PER_DAY = ofDays(1).toHours();
 
-  long toSeconds(final Duration duration) {
-    return duration.toMillis() / ONE_SECOND.toMillis();
-  }
-
-  String getFormattedTime(final long seconds) {
+  String getFormattedDuration(final long seconds) {
     return String.format(Strings.FMT_HH_MM_SS,
-        seconds / (MINS_PER_HOUR * SECS_PER_MINUTE),
-        (seconds % (MINS_PER_HOUR * SECS_PER_MINUTE)) / MINS_PER_HOUR,
-        seconds % SECS_PER_MINUTE);
+        seconds / (MINUTES_PER_HOUR * SECONDS_PER_MINUTE),
+        (seconds % (MINUTES_PER_HOUR * SECONDS_PER_MINUTE)) / MINUTES_PER_HOUR,
+        seconds % SECONDS_PER_MINUTE);
   }
 
-  String getFormattedTime(final Duration duration) {
-    return getFormattedTime(toSeconds(duration));
+  String getFormattedDuration(final Duration duration) {
+    return getFormattedDuration(duration.getSeconds());
   }
 
-  boolean isDivisible(final Duration large, final Duration small) {
-    final long largeMillis = large.toMillis();
-    final long smallMillis = small.toMillis();
-    return largeMillis % smallMillis == 0;
+  boolean isDivisibleInSeconds(final Duration large, final Duration small) {
+    return large.getSeconds() % small.getSeconds() == 0;
   }
 
-  <E> E getComboBoxValue(final JComboBox<E> comboBox) {
+  <E> E getSelected(final JComboBox<E> comboBox) {
     return comboBox.getItemAt(comboBox.getSelectedIndex());
   }
 
@@ -61,6 +53,6 @@ enum Utils {
   ComboBoxModel<Long> numberedComboBoxModel(final long startInclusive, final long endExclusive) {
     return new DefaultComboBoxModel<>(
         LongStream.range(startInclusive, endExclusive).boxed()
-        .collect(toCollection(Vector::new)));
+            .collect(toCollection(Vector::new)));
   }
 }

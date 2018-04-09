@@ -77,14 +77,14 @@ final class OutputView {
 
   void updateIntervalDuration(final Duration intervalDuration) {
     final String intervalText =
-        UTILS.toSeconds(intervalDuration) + Strings.LABEL_TIME_INTERVAL_SUFFIX;
+        intervalDuration.getSeconds() + Strings.LABEL_TIME_INTERVAL_SUFFIX;
     invokeLater(() -> intervalLabel.setText(intervalText));
   }
 
   void updateLabels(final Duration elapsedDuration, final Duration remainingDuration) {
-    final String elapsedText = UTILS.getFormattedTime(elapsedDuration);
+    final String elapsedText = UTILS.getFormattedDuration(elapsedDuration);
     final String remainingText = ofNullable(remainingDuration)
-        .map(UTILS::getFormattedTime).orElse(Strings.LABEL_FOREVER);
+        .map(UTILS::getFormattedDuration).orElse(Strings.LABEL_FOREVER);
     invokeLater(() -> {
       elapsedLabel.setText(elapsedText);
       remainingLabel.setText(remainingText);

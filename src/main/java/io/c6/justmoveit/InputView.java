@@ -1,7 +1,7 @@
 package io.c6.justmoveit;
 
 import static io.c6.justmoveit.Utils.HOURS_PER_DAY;
-import static io.c6.justmoveit.Utils.MINS_PER_HOUR;
+import static io.c6.justmoveit.Utils.MINUTES_PER_HOUR;
 import static io.c6.justmoveit.Utils.UTILS;
 import static java.time.Duration.ofHours;
 import static java.time.Duration.ofMinutes;
@@ -44,7 +44,7 @@ final class InputView {
     exitButton = new JButton(Strings.LABEL_EXIT_1);
     fixedTimeCheckBox = new JCheckBox(Strings.LABEL_FIXED_TIME);
     hoursComboBox = new JComboBox<>(UTILS.numberedComboBoxModel(HOURS_PER_DAY));
-    minutesComboBox = new JComboBox<>(UTILS.numberedComboBoxModel(MINS_PER_HOUR));
+    minutesComboBox = new JComboBox<>(UTILS.numberedComboBoxModel(MINUTES_PER_HOUR));
     secondsComboBox = new JComboBox<>(UTILS.numberedComboBoxModel(1, (MAX_INTERVAL_SECONDS + 1)));
     addFixedTimeCheckBox();
     addDurationComboBoxes();
@@ -74,7 +74,7 @@ final class InputView {
   }
 
   private void addIntervalComboBox() {
-    secondsComboBox.setSelectedIndex((int) (MINS_PER_HOUR - 1));
+    secondsComboBox.setSelectedIndex((int) (MINUTES_PER_HOUR - 1));
     final JPanel panel3 = new JPanel(new FlowLayout());
     panel3.add(new JLabel(Strings.LABEL_TIME_INTERVAL_SEC));
     panel3.add(secondsComboBox);
@@ -103,13 +103,13 @@ final class InputView {
   }
 
   Duration getExecutionDuration() {
-    final long minutes = UTILS.getComboBoxValue(minutesComboBox);
-    final long hours = UTILS.getComboBoxValue(hoursComboBox);
+    final long minutes = UTILS.getSelected(minutesComboBox);
+    final long hours = UTILS.getSelected(hoursComboBox);
     return ofHours(hours).plus(ofMinutes(minutes));
   }
 
   Duration getIntervalDuration() {
-    final long intervalSeconds = UTILS.getComboBoxValue(secondsComboBox);
+    final long intervalSeconds = UTILS.getSelected(secondsComboBox);
     return ofSeconds(intervalSeconds);
   }
 

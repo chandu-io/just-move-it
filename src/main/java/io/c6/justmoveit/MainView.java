@@ -101,7 +101,7 @@ final class MainView {
   }
 
   private void tryPressingKey(final Duration elapsed) {
-    if (UTILS.isDivisible(elapsed, inputPanel.getIntervalDuration())) {
+    if (UTILS.isDivisibleInSeconds(elapsed, inputPanel.getIntervalDuration())) {
       LOG.info(Strings.LOG_MSG_KEY_PRESSED);
       robot.keyRelease(KeyEvent.VK_F23);
     }
