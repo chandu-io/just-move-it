@@ -4,6 +4,7 @@ import static io.c6.justmoveit.Utils.UTILS;
 import static java.util.Optional.ofNullable;
 import static javax.swing.SwingUtilities.invokeLater;
 
+import java.awt.Container;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.KeyEvent;
@@ -90,7 +91,7 @@ final class OutputView {
     });
   }
 
-  JPanel getContainer() {
+  Container getContainer() {
     return outputPanel;
   }
 }

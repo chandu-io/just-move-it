@@ -7,6 +7,7 @@ import static java.time.Duration.ofHours;
 import static java.time.Duration.ofMinutes;
 import static java.time.Duration.ofSeconds;
 
+import java.awt.Container;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.KeyEvent;
@@ -112,7 +113,7 @@ final class InputView {
     return ofSeconds(intervalSeconds);
   }
 
-  JPanel getContainer() {
+  Container getContainer() {
     return inputPanel;
   }
 }
