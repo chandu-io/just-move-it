@@ -2,8 +2,11 @@ package io.c6.justmoveit;
 
 import static io.c6.justmoveit.Utils.UTILS;
 import static java.time.Duration.ZERO;
+import static java.util.Optional.ofNullable;
+import static java.util.logging.Level.ALL;
 import static java.util.logging.Level.SEVERE;
 import static javax.swing.SwingUtilities.invokeLater;
+import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 
 import java.awt.AWTException;
 import java.awt.CardLayout;
@@ -13,15 +16,13 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.time.Duration;
-import java.util.Optional;
+import java.util.function.Supplier;
 import java.util.logging.FileHandler;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.WindowConstants;
 
 /**
  * Main application window which contains the core logic
@@ -35,7 +36,7 @@ final class MainView {
 
   static {
     LOG = Logger.getLogger(Strings.LOGGER_NAME);
-    LOG.setLevel(Level.ALL);
+    LOG.setLevel(ALL);
     try {
       final FileHandler fileHandler = new FileHandler(Strings.LOG_FILE_NAME, true);
       fileHandler.setFormatter(new SimpleFormatter());
@@ -69,7 +70,7 @@ final class MainView {
     pane.add(inputPanel.getContainer());
     pane.add(outputPanel.getContainer());
     frame.setContentPane(pane);
-    frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+    frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
     frame.addWindowListener(onBeforeClosing());
     frame.setResizable(false);
     frame.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -120,24 +121,36 @@ final class MainView {
     }
   }
 
+  private void switchToInputView() {
+    cardLayout.first(pane);
+    cleanup();
+  }
+
+  private void switchToOutputView() {
+    cardLayout.last(pane);
+    outputPanel.updateIntervalDuration(inputPanel.getIntervalDuration());
+  }
+
+  private void startIntervalRunner() {
+    // Lazy initialization of `IntervalRunner` based on `isFixedTimeEnabled`
+    final Supplier<IntervalRunner> fixedDurationSupplier = () -> new FixedDurationRunner(
+        inputPanel.getExecutionDuration(), this::fixedDurationConsumerTask);
+    final Supplier<IntervalRunner> foreverSupplier = () -> new ForeverRunner(
+        this::foreverConsumerTask);
+    runner = inputPanel.isFixedTimeEnabled() ? fixedDurationSupplier.get() : foreverSupplier.get();
+  }
+
   private void cleanup() {
-    Optional.ofNullable(runner).ifPresent(IntervalRunner::stop);
+    ofNullable(runner).ifPresent(IntervalRunner::stop);
   }
 
   void onStartHandler() {
-    cardLayout.last(pane);
-    final boolean fixedTimeEnabled = inputPanel.isFixedTimeEnabled();
-    final Duration executionDuration = inputPanel.getExecutionDuration();
-    final Duration intervalDuration = inputPanel.getIntervalDuration();
-    runner = fixedTimeEnabled
-        ? new FixedDurationRunner(executionDuration, this::fixedDurationConsumerTask)
-        : new ForeverRunner(this::foreverConsumerTask);
-    outputPanel.updateIntervalDuration(intervalDuration);
+    startIntervalRunner();
+    switchToOutputView();
   }
 
   void onStopHandler() {
-    cardLayout.first(pane);
-    cleanup();
+    switchToInputView();
   }
 
   void onExitHandler() {

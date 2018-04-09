@@ -12,6 +12,7 @@ import java.util.stream.LongStream;
 
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JComboBox;
 
 /**
  * @author Chandrasekhar Thotakura
@@ -47,6 +48,10 @@ enum Utils {
     final long largeMillis = large.toMillis();
     final long smallMillis = small.toMillis();
     return largeMillis % smallMillis == 0;
+  }
+
+  <E> E getComboBoxValue(final JComboBox<E> comboBox) {
+    return comboBox.getItemAt(comboBox.getSelectedIndex());
   }
 
   ComboBoxModel<Long> numberedComboBoxModel(final long endExclusive) {

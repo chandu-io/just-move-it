@@ -102,13 +102,13 @@ final class InputView {
   }
 
   Duration getExecutionDuration() {
-    final long minutes = (long) minutesComboBox.getSelectedItem();
-    final long hours = (long) hoursComboBox.getSelectedItem();
+    final long minutes = UTILS.getComboBoxValue(minutesComboBox);
+    final long hours = UTILS.getComboBoxValue(hoursComboBox);
     return ofHours(hours).plus(ofMinutes(minutes));
   }
 
   Duration getIntervalDuration() {
-    final long intervalSeconds = (long) secondsComboBox.getSelectedItem();
+    final long intervalSeconds = UTILS.getComboBoxValue(secondsComboBox);
     return ofSeconds(intervalSeconds);
   }
 

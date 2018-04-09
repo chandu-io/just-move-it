@@ -1,13 +1,13 @@
 package io.c6.justmoveit;
 
 import static io.c6.justmoveit.Utils.UTILS;
+import static java.util.Optional.ofNullable;
 import static javax.swing.SwingUtilities.invokeLater;
 
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.KeyEvent;
 import java.time.Duration;
-import java.util.Optional;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -82,7 +82,7 @@ final class OutputView {
 
   void updateLabels(final Duration elapsedDuration, final Duration remainingDuration) {
     final String elapsedText = UTILS.getFormattedTime(elapsedDuration);
-    final String remainingText = Optional.ofNullable(remainingDuration)
+    final String remainingText = ofNullable(remainingDuration)
         .map(UTILS::getFormattedTime).orElse(Strings.LABEL_FOREVER);
     invokeLater(() -> {
       elapsedLabel.setText(elapsedText);
