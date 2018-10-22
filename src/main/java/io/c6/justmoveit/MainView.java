@@ -134,7 +134,7 @@ final class MainView {
   private void startIntervalRunner() {
     // Lazy initialization of `IntervalRunner` based on `isFixedTimeEnabled`
     final Supplier<IntervalRunner> fixedDurationSupplier = () -> new FixedDurationRunner(
-        inputPanel.getExecutionDuration(), this::fixedDurationConsumerTask);
+        this::fixedDurationConsumerTask, inputPanel.getExecutionDuration());
     final Supplier<IntervalRunner> foreverSupplier = () -> new ForeverRunner(
         this::foreverConsumerTask);
     runner = inputPanel.isFixedTimeEnabled() ? fixedDurationSupplier.get() : foreverSupplier.get();

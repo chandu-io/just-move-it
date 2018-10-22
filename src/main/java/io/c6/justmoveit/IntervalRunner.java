@@ -3,9 +3,7 @@ package io.c6.justmoveit;
 /**
  * @author Chandrasekhar Thotakura
  */
-interface IntervalRunner {
+interface IntervalRunner extends Runnable {
 
   void stop();
-
-  boolean isDone();
 }

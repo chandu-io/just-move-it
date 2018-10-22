@@ -18,12 +18,6 @@ final class TaskRunner {
   }
 
   void stop() {
-    if (isRunning()) {
-      executor.shutdownNow();
-    }
-  }
-
-  boolean isRunning() {
-    return executor.isShutdown();
+    executor.shutdownNow();
   }
 }

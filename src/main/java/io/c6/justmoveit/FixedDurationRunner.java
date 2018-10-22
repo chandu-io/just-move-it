@@ -1,13 +1,10 @@
 package io.c6.justmoveit;
 
-import static io.c6.justmoveit.Utils.MILLIS_PER_SECOND;
-import static io.c6.justmoveit.Utils.ONE_SECOND;
-import static java.time.Duration.ZERO;
-import static java.util.concurrent.Executors.newScheduledThreadPool;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
-
 import java.time.Duration;
-import java.util.concurrent.ScheduledExecutorService;
+
+import static io.c6.justmoveit.ActiveTimer.countdownTimer;
+import static java.time.Duration.ZERO;
+import static java.util.Optional.ofNullable;
 
 /**
  * Implementation for `IntervalRunner`. An executor will run the `FixedDurationTask`
@@ -17,39 +14,25 @@ import java.util.concurrent.ScheduledExecutorService;
  */
 final class FixedDurationRunner implements IntervalRunner {
 
-  private static final int EXECUTOR_POOL_SIZE = 1;
-  private static final long EXECUTOR_DELAY_MILLIS = 0L;
-
   private final FixedDurationTask task;
-  private final ScheduledExecutorService executor = newScheduledThreadPool(EXECUTOR_POOL_SIZE);
+  private final TaskRunner taskRunner;
+  private Timer timer;
 
-  private Duration remainingDuration;
-  private Duration elapsedDuration;
-
-  FixedDurationRunner(final Duration executionDuration, final FixedDurationTask task) {
-    remainingDuration = executionDuration;
-    this.task = task;
-    executor.scheduleAtFixedRate(
-        this::run, EXECUTOR_DELAY_MILLIS, MILLIS_PER_SECOND, MILLISECONDS);
-    elapsedDuration = ZERO;
+  FixedDurationRunner(final FixedDurationTask task, final Duration executionDuration) {
+    this.task = ofNullable(task).orElseThrow();
+    timer = countdownTimer(ofNullable(executionDuration).orElse(ZERO));
+    taskRunner = new TaskRunner(this);
   }
 
   @Override
   public void stop() {
-    if (!isDone()) {
-      executor.shutdownNow();
-    }
+    taskRunner.stop();
   }
 
   @Override
-  public boolean isDone() {
-    return executor.isShutdown();
-  }
-
-  private void run() {
-    task.execute(elapsedDuration, remainingDuration);
-    remainingDuration = remainingDuration.minus(ONE_SECOND);
-    elapsedDuration = elapsedDuration.plus(ONE_SECOND);
+  public void run() {
+    task.execute(timer.elapsedDuration(), timer.remainingDuration());
+    timer = timer.tick();
   }
 
   @FunctionalInterface
