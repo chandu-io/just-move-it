@@ -21,6 +21,7 @@ enum Utils {
 
   UTILS;
 
+  static final Duration FOREVER = ofSeconds(Long.MAX_VALUE, 999_999_999L);
   static final Duration ONE_SECOND = ofSeconds(1);
   static final long MILLIS_PER_SECOND = ONE_SECOND.toMillis();
   static final long SECONDS_PER_MINUTE = ofMinutes(1).getSeconds();
