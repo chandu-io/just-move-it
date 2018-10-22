@@ -5,7 +5,7 @@ package io.c6.justmoveit;
  */
 enum Strings {
 
-  STRINGS;
+  ;
 
   static final String APP_NAME = "JustMoveIt";
   static final String VERSION = "1.0.2";
