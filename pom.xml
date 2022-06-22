@@ -16,11 +16,10 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <maven.compiler.target>17</maven.compiler.target>
     <maven.compiler.source>17</maven.compiler.source>
-    <junit.platform.version>1.1.0</junit.platform.version>
-    <junit.jupiter.version>5.1.0</junit.jupiter.version>
-    <!-- maven-surefire-plugin.version 2.20.0 has some issues with JUnit 5 -->
-    <maven-surefire-plugin.version>2.19.1</maven-surefire-plugin.version>
-    <maven-jar-plugin.version>3.0.2</maven-jar-plugin.version>
+    <junit.jupiter.version>5.8.2</junit.jupiter.version>
+    <junit.platform.version>1.3.2</junit.platform.version>
+    <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
+    <maven-jar-plugin.version>3.2.2</maven-jar-plugin.version>
     <main.class>io.c6.justmoveit.Main</main.class>
   </properties>
 
