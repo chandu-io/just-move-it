@@ -6,7 +6,7 @@
 
   <groupId>io.c6</groupId>
   <artifactId>just-move-it</artifactId>
-  <version>1.0.2</version>
+  <version>1.0.2-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>JustMoveIt</name>
