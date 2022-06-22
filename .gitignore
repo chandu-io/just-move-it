@@ -1,5 +1,7 @@
 # See this https://help.github.com/articles/ignoring-files
 
+executables/*-SNAPSHOT.jar
+
 # OS generated files #
 ######################
 .DS_Store
