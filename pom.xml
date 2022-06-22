@@ -19,6 +19,7 @@
     <junit.jupiter.version>5.8.2</junit.jupiter.version>
     <junit.platform.version>1.3.2</junit.platform.version>
     <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
+    <maven-exec-maven-plugin.version>3.0.0</maven-exec-maven-plugin.version>
     <maven-jar-plugin.version>3.2.2</maven-jar-plugin.version>
     <main.class>io.c6.justmoveit.Main</main.class>
   </properties>
@@ -54,6 +55,15 @@
             <version>${junit.platform.version}</version>
           </dependency>
         </dependencies>
+      </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>${maven-exec-maven-plugin.version}</version>
+        <configuration>
+          <mainClass>${main.class}</mainClass>
+        </configuration>
       </plugin>
 
       <plugin>
