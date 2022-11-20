@@ -1,10 +1,8 @@
 package io.c6.justmoveit;
 
-import static io.c6.justmoveit.Utils.UTILS;
-import static java.time.Duration.ZERO;
-import static java.util.Optional.ofNullable;
-import static java.util.logging.Level.ALL;
-import static java.util.logging.Level.SEVERE;
+import static io.c6.justmoveit.StringsSingleton.Strings;
+import static io.c6.justmoveit.UtilsSingleton.Utils;
+import static java.util.logging.Level.*;
 import static javax.swing.SwingUtilities.invokeLater;
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 
@@ -16,6 +14,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.time.Duration;
+import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
@@ -38,7 +37,7 @@ final class MainView {
     LOG = Logger.getLogger(Strings.LOGGER_NAME);
     LOG.setLevel(ALL);
     try {
-      final FileHandler fileHandler = new FileHandler(Strings.LOG_FILE_NAME, true);
+      final var fileHandler = new FileHandler(Strings.LOG_FILE_NAME, true);
       fileHandler.setFormatter(new SimpleFormatter());
       LOG.addHandler(fileHandler);
     } catch (final IOException e) {
@@ -101,7 +100,7 @@ final class MainView {
   }
 
   private void tryPressingKey(final Duration elapsed) {
-    if (UTILS.isDivisibleInSeconds(elapsed, inputPanel.getIntervalDuration())) {
+    if (Utils.isDivisibleInSeconds(elapsed, inputPanel.getIntervalDuration())) {
       LOG.info(Strings.LOG_MSG_KEY_PRESSED);
       robot.keyRelease(KeyEvent.VK_F23);
     }
@@ -113,7 +112,7 @@ final class MainView {
   }
 
   private void fixedDurationConsumerTask(final Duration elapsed, final Duration remaining) {
-    if (ZERO.equals(remaining)) {
+    if (Duration.ZERO.equals(remaining)) {
       onExitHandler();
     } else {
       tryPressingKey(elapsed);
@@ -141,7 +140,7 @@ final class MainView {
   }
 
   private void cleanup() {
-    ofNullable(runner).ifPresent(IntervalRunner::stop);
+    Optional.ofNullable(runner).ifPresent(IntervalRunner::stop);
   }
 
   void onStartHandler() {

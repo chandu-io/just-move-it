@@ -1,9 +1,6 @@
 package io.c6.justmoveit;
 
-import static java.time.Duration.ofDays;
-import static java.time.Duration.ofHours;
-import static java.time.Duration.ofMinutes;
-import static java.time.Duration.ofSeconds;
+import static io.c6.justmoveit.StringsSingleton.Strings;
 import static java.util.stream.Collectors.toCollection;
 
 import java.time.Duration;
@@ -17,29 +14,24 @@ import javax.swing.JComboBox;
 /**
  * @author Chandrasekhar Thotakura
  */
-enum Utils {
+enum UtilsSingleton {
 
-  UTILS;
+  Utils;
 
-  static final Duration ONE_SECOND = ofSeconds(1);
-  static final long MILLIS_PER_SECOND = ONE_SECOND.toMillis();
-  static final long SECONDS_PER_MINUTE = ofMinutes(1).getSeconds();
-  static final long MINUTES_PER_HOUR = ofHours(1).toMinutes();
-  static final long HOURS_PER_DAY = ofDays(1).toHours();
-
-  String getFormattedDuration(final long seconds) {
-    return String.format(Strings.FMT_HH_MM_SS,
-        seconds / (MINUTES_PER_HOUR * SECONDS_PER_MINUTE),
-        (seconds % (MINUTES_PER_HOUR * SECONDS_PER_MINUTE)) / MINUTES_PER_HOUR,
-        seconds % SECONDS_PER_MINUTE);
-  }
+  final Duration ONE_SECOND = Duration.ofSeconds(1);
+  final Duration ONE_MINUTE = Duration.ofMinutes(1);
+  final Duration ONE_HOUR = Duration.ofHours(1);
+  final Duration ONE_DAY = Duration.ofDays(1);
 
   String getFormattedDuration(final Duration duration) {
-    return getFormattedDuration(duration.getSeconds());
+    var HH = duration.toHours();
+    var mm = duration.toMinutesPart();
+    var ss = duration.toSecondsPart();
+    return Strings.FMT_HH_MM_SS.formatted(HH, mm, ss);
   }
 
   boolean isDivisibleInSeconds(final Duration large, final Duration small) {
-    return large.getSeconds() % small.getSeconds() == 0;
+    return large.toSeconds() % small.toSeconds() == 0;
   }
 
   <E> E getSelected(final JComboBox<E> comboBox) {

@@ -1,7 +1,7 @@
 package io.c6.justmoveit;
 
-import static io.c6.justmoveit.Utils.UTILS;
-import static java.util.Optional.ofNullable;
+import static io.c6.justmoveit.StringsSingleton.Strings;
+import static io.c6.justmoveit.UtilsSingleton.Utils;
 import static javax.swing.SwingUtilities.invokeLater;
 
 import java.awt.Container;
@@ -9,6 +9,7 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.KeyEvent;
 import java.time.Duration;
+import java.util.Optional;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -44,21 +45,21 @@ final class OutputView {
   }
 
   private void addIntervalLabel() {
-    final JPanel panel1 = new JPanel(new FlowLayout());
+    final var panel1 = new JPanel(new FlowLayout());
     panel1.add(new JLabel(Strings.LABEL_TIME_INTERVAL));
     panel1.add(intervalLabel);
     outputPanel.add(panel1);
   }
 
   private void addElapsedLabel() {
-    final JPanel panel2 = new JPanel(new FlowLayout());
+    final var panel2 = new JPanel(new FlowLayout());
     panel2.add(new JLabel(Strings.LABEL_ELAPSED_TIME));
     panel2.add(elapsedLabel);
     outputPanel.add(panel2);
   }
 
   private void addRemainingLabel() {
-    final JPanel panel3 = new JPanel(new FlowLayout());
+    final var panel3 = new JPanel(new FlowLayout());
     panel3.add(new JLabel(Strings.LABEL_REMAINING_TIME));
     panel3.add(remainingLabel);
     outputPanel.add(panel3);
@@ -69,22 +70,22 @@ final class OutputView {
     stopButton.setMnemonic(KeyEvent.VK_O);
     exitButton.addActionListener(e -> mainWindow.onExitHandler());
     exitButton.setMnemonic(KeyEvent.VK_X);
-    final JPanel panel4 = new JPanel(new FlowLayout());
+    final var panel4 = new JPanel(new FlowLayout());
     panel4.add(stopButton);
     panel4.add(exitButton);
     outputPanel.add(panel4);
   }
 
   void updateIntervalDuration(final Duration intervalDuration) {
-    final String intervalText =
+    final var intervalText =
         intervalDuration.getSeconds() + Strings.LABEL_TIME_INTERVAL_SUFFIX;
     invokeLater(() -> intervalLabel.setText(intervalText));
   }
 
   void updateLabels(final Duration elapsedDuration, final Duration remainingDuration) {
-    final String elapsedText = UTILS.getFormattedDuration(elapsedDuration);
-    final String remainingText = ofNullable(remainingDuration)
-        .map(UTILS::getFormattedDuration).orElse(Strings.LABEL_FOREVER);
+    final var elapsedText = Utils.getFormattedDuration(elapsedDuration);
+    final var remainingText = Optional.ofNullable(remainingDuration)
+        .map(Utils::getFormattedDuration).orElse(Strings.LABEL_FOREVER);
     invokeLater(() -> {
       elapsedLabel.setText(elapsedText);
       remainingLabel.setText(remainingText);

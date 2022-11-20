@@ -1,13 +1,11 @@
 package io.c6.justmoveit;
 
-import static io.c6.justmoveit.Utils.MILLIS_PER_SECOND;
-import static io.c6.justmoveit.Utils.ONE_SECOND;
-import static java.time.Duration.ZERO;
-import static java.util.concurrent.Executors.newScheduledThreadPool;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static io.c6.justmoveit.UtilsSingleton.Utils;
 
 import java.time.Duration;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Implementation for `IntervalRunner`. An executor will run the `FixedDurationTask`
@@ -18,10 +16,10 @@ import java.util.concurrent.ScheduledExecutorService;
 final class FixedDurationRunner implements IntervalRunner {
 
   private static final int EXECUTOR_POOL_SIZE = 1;
-  private static final long EXECUTOR_DELAY_MILLIS = 0L;
+  private static final Duration EXECUTOR_DELAY = Duration.ZERO;
 
   private final FixedDurationTask task;
-  private final ScheduledExecutorService executor = newScheduledThreadPool(EXECUTOR_POOL_SIZE);
+  private final ScheduledExecutorService executor = Executors.newScheduledThreadPool(EXECUTOR_POOL_SIZE);
 
   private Duration remainingDuration;
   private Duration elapsedDuration;
@@ -30,8 +28,8 @@ final class FixedDurationRunner implements IntervalRunner {
     remainingDuration = executionDuration;
     this.task = task;
     executor.scheduleAtFixedRate(
-        this::run, EXECUTOR_DELAY_MILLIS, MILLIS_PER_SECOND, MILLISECONDS);
-    elapsedDuration = ZERO;
+        this::run, EXECUTOR_DELAY.toMillis(), Utils.ONE_SECOND.toMillis(), TimeUnit.MILLISECONDS);
+    elapsedDuration = Duration.ZERO;
   }
 
   @Override
@@ -48,8 +46,8 @@ final class FixedDurationRunner implements IntervalRunner {
 
   private void run() {
     task.execute(elapsedDuration, remainingDuration);
-    remainingDuration = remainingDuration.minus(ONE_SECOND);
-    elapsedDuration = elapsedDuration.plus(ONE_SECOND);
+    remainingDuration = remainingDuration.minus(Utils.ONE_SECOND);
+    elapsedDuration = elapsedDuration.plus(Utils.ONE_SECOND);
   }
 
   @FunctionalInterface
